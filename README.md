@@ -1,6 +1,3 @@
-<img src="C:\Users\ECC\OneDrive\Bureau\Escape-room-discord-bot\image\README\img.jpg" width="200">
-
-
 # Escape-room-discord-bot
 
 a Discord bot that simulates a virtual escape room experience, where users must solve puzzles, riddles, and challenges to escape a themed room within a set time limit.
@@ -17,7 +14,7 @@ a Discord bot that simulates a virtual escape room experience, where users must 
 5. **Team Play:** Allow users to form teams to collaborate and solve puzzles together.
 6. **Leaderboard:** Keep track of the fastest escape times and display a leaderboard to encourage competition.
 
-#### **Technical Requirements:**
+### **Technical Requirements:**
 
 1. **Discord.py Library:** Use the Discord.py library to interact with the Discord API and create the bot.
 2. **Database:** Design a database to store room themes, puzzles, clues, and user progress.
