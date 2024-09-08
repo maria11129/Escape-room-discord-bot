@@ -1,6 +1,7 @@
-`<div align="center">`
-  `<img src="C:\Users\ECC\OneDrive\Bureau\Escape-room-discord-bot\image\README\pic.jpg" width="200">`
 
+
+<div align="center">
+  <img src="C:\Users\ECC\OneDrive\Bureau\Escape-room-discord-bot\image\README\pic.png" width="200">
 </div>
 
 
