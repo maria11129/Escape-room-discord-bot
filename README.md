@@ -1,10 +1,3 @@
-
-
-<div align="center">
-  <img src="C:\Users\ECC\OneDrive\Bureau\Escape-room-discord-bot\image\README\pic.png" width="200">
-</div>
-
-
 # Escape-room-discord-bot
 
 a Discord bot that simulates a virtual escape room experience, where users must solve puzzles, riddles, and challenges to escape a themed room within a set time limit.
