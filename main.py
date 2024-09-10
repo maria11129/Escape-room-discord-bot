@@ -35,18 +35,24 @@ puzzle2 = Puzzle('I am a 7-bit binary number. When my digits are interpreted as 
 puzzle3 = Puzzle('I am a binary number that is 8 bits long. When you convert me to decimal, I give you the total number of days in a non-leap year. My binary representation starts with 0001. What am I?', '00100111', 'Consider how many days are in a standard year and how that might be represented in binary.')
 
 # Create new room
-room1 = Room('Cipher Chamber', 'Solve puzzles related to binary', [puzzle1, puzzle2, puzzle3])
+room1 = Room('cipher chamber', 'Solve puzzles related to binary', [puzzle1, puzzle2, puzzle3])
 
 rooms = [room1]
+
+# Initialize global variable
+current_room =None
 
 # Create a bot command to start the game
 @bot.command()
 async def start(ctx, room_name: str):
-    print(f"Start command received with room_name: {room_name}")  # Debug output
+    print(f"Start command received with room_name: '{room_name}'")  # Debug output
     global current_room
     current_room = None
+    room_name = room_name.strip().lower()  # Normalize and strip whitespace
+    print(f"Normalized room_name: '{room_name}'")  # Debug output
     for r in rooms:
-        if r.name == room_name:
+        print(f"Checking room: '{r.name.lower()}'")  # Debug output
+        if r.name.lower() == room_name:  # Compare in lowercase
             current_room = r
             await ctx.send(f'Welcome to {r.name}!')
             await ctx.send(r.description)
@@ -55,6 +61,7 @@ async def start(ctx, room_name: str):
             break
     else:
         await ctx.send('Room not found.')
+
 
 # Create a bot command to submit an answer
 @bot.command()
