@@ -44,7 +44,7 @@ current_room =None
 
 # Create a bot command to start the game
 @bot.command()
-async def start(ctx, room_name: str):
+async def start(ctx, *, room_name: str):  # The '*' allows capturing the full input after the command
     print(f"Start command received with room_name: '{room_name}'")  # Debug output
     global current_room
     current_room = None
@@ -61,6 +61,8 @@ async def start(ctx, room_name: str):
             break
     else:
         await ctx.send('Room not found.')
+
+
 
 
 # Create a bot command to submit an answer
