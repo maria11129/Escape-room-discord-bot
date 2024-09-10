@@ -35,19 +35,21 @@ puzzle2 = Puzzle('I am a 7-bit binary number. When my digits are interpreted as 
 puzzle3 = Puzzle('I am a binary number that is 8 bits long. When you convert me to decimal, I give you the total number of days in a non-leap year. My binary representation starts with 0001. What am I?', '00100111', 'Consider how many days are in a standard year and how that might be represented in binary.')
 
 # Create new room
-room1 = Room('cipher chamber', 'Solve puzzles related to binary', [puzzle1, puzzle2, puzzle3])
+room1 = Room('Cipher Chamber', 'Solve puzzles related to binary', [puzzle1, puzzle2, puzzle3])
 
 rooms = [room1]
 
-# Initialize global variable
-current_room =None
+# Variables to track game state
+current_room = None
+current_puzzle_index = 0
 
 # Create a bot command to start the game
 @bot.command()
-async def start(ctx, *, room_name: str):  # The '*' allows capturing the full input after the command
+async def start(ctx, *, room_name: str):
     print(f"Start command received with room_name: '{room_name}'")  # Debug output
-    global current_room
+    global current_room, current_puzzle_index
     current_room = None
+    current_puzzle_index = 0
     room_name = room_name.strip().lower()  # Normalize and strip whitespace
     print(f"Normalized room_name: '{room_name}'")  # Debug output
     for r in rooms:
@@ -56,27 +58,35 @@ async def start(ctx, *, room_name: str):  # The '*' allows capturing the full in
             current_room = r
             await ctx.send(f'Welcome to {r.name}!')
             await ctx.send(r.description)
-            for puzzle in r.puzzles:
-                await ctx.send(puzzle.question)
+            # Send the first puzzle
+            await ctx.send(r.puzzles[current_puzzle_index].question)
             break
     else:
         await ctx.send('Room not found.')
 
-
-
-
 # Create a bot command to submit an answer
 @bot.command()
 async def answer(ctx, *, user_answer: str):
-    global current_room
+    global current_room, current_puzzle_index
     if current_room is None:
         await ctx.send('You need to start a room first using !start [room_name]')
         return
 
-    for puzzle in current_room.puzzles:
-        if user_answer.lower() == puzzle.answer.lower():
-            await ctx.send('Correct!')
-            break
+    # Get the current puzzle
+    current_puzzle = current_room.puzzles[current_puzzle_index]
+
+    if user_answer.lower() == current_puzzle.answer.lower():
+        await ctx.send('Correct!')
+        current_puzzle_index += 1  # Move to the next puzzle
+
+        # Check if there are more puzzles
+        if current_puzzle_index < len(current_room.puzzles):
+            # Send the next puzzle
+            await ctx.send(current_room.puzzles[current_puzzle_index].question)
+        else:
+            await ctx.send('Congratulations! You have solved all the puzzles in the ciphar chamber!.')
+            current_room = None  # Reset the game
+            current_puzzle_index = 0
     else:
         await ctx.send('Incorrect. Try again!')
 
