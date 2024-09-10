@@ -84,11 +84,26 @@ async def answer(ctx, *, user_answer: str):
             # Send the next puzzle
             await ctx.send(current_room.puzzles[current_puzzle_index].question)
         else:
-            await ctx.send('Congratulations! You have solved all the puzzles in the ciphar chamber!.')
+            await ctx.send('Congratulations! You have solved all the puzzles!')
             current_room = None  # Reset the game
             current_puzzle_index = 0
     else:
         await ctx.send('Incorrect. Try again!')
+        await ctx.send("If you need help, type `!clue` for a hint!")
+
+# Create a bot command to request a clue
+@bot.command()
+async def clue(ctx):
+    global current_room, current_puzzle_index
+    if current_room is None:
+        await ctx.send('You need to start a room first using !start [room_name]')
+        return
+
+    # Get the current puzzle
+    current_puzzle = current_room.puzzles[current_puzzle_index]
+    
+    # Provide the clue for the current puzzle
+    await ctx.send(f"Here’s a clue: {current_puzzle.clue}")
 
 # Run the bot
 bot.run(os.getenv('TOKEN'))
