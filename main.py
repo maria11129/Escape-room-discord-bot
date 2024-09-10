@@ -1,15 +1,16 @@
 import discord
 from discord.ext import commands
-import os 
+import os
 from dotenv import load_dotenv
-
 
 # Load environment variables from the .env file
 load_dotenv()
 
 # Define the necessary intents
 intents = discord.Intents.default()
-intents.messages = True  # Enable the intent to receive message events
+intents.messages = True
+intents.guilds = True
+intents.message_content = True  # Enable to receive message content
 
 # Create the bot instance with command prefix and intents
 bot = commands.Bot(command_prefix='!', intents=intents)
@@ -28,26 +29,43 @@ class Puzzle:
         self.answer = answer
         self.clue = clue
 
-# Create a room
-room = Room('Detective\'s Office', 'Solve the mystery!', [
-    Puzzle('What is the combination to the safe?', '1234', 'Check the bookshelf'),
-    Puzzle('Who is the suspect?', 'John Doe', 'Look at the security footage')
-])
+# Create new puzzles
+puzzle1 = Puzzle('I am a sequence of digits, but I only know 0s and 1s. When you add my values together, you get a perfect square. What am I?', '10000', 'Think about numbers that computers love to talk in!')
+puzzle2 = Puzzle('I am a 7-bit binary number. When my digits are interpreted as a decimal number, they represent a prime number. When converted to ASCII, I am a character used in many programming languages to represent a newline. What am I?', '0000100', 'Look for a binary sequence that translates to a symbol commonly used to start a new line.')
+puzzle3 = Puzzle('I am a binary number that is 8 bits long. When you convert me to decimal, I give you the total number of days in a non-leap year. My binary representation starts with 0001. What am I?', '00100111', 'Consider how many days are in a standard year and how that might be represented in binary.')
+
+# Create new room
+room1 = Room('Cipher Chamber', 'Solve puzzles related to binary', [puzzle1, puzzle2, puzzle3])
+
+rooms = [room1]
 
 # Create a bot command to start the game
 @bot.command()
-async def start(ctx):
-    await ctx.send(f'Welcome to {room.name}!')
-    await ctx.send(room.description)
-    for puzzle in room.puzzles:
-        await ctx.send(puzzle.question)
+async def start(ctx, room_name: str):
+    print(f"Start command received with room_name: {room_name}")  # Debug output
+    global current_room
+    current_room = None
+    for r in rooms:
+        if r.name == room_name:
+            current_room = r
+            await ctx.send(f'Welcome to {r.name}!')
+            await ctx.send(r.description)
+            for puzzle in r.puzzles:
+                await ctx.send(puzzle.question)
+            break
+    else:
+        await ctx.send('Room not found.')
 
 # Create a bot command to submit an answer
 @bot.command()
-async def answer(ctx, *, answer: str):  # Use * to capture the whole answer as a single string
-    # Check if the answer is correct
-    for puzzle in room.puzzles:
-        if answer.lower() == puzzle.answer.lower():  # Ignore case for answer comparison
+async def answer(ctx, *, user_answer: str):
+    global current_room
+    if current_room is None:
+        await ctx.send('You need to start a room first using !start [room_name]')
+        return
+
+    for puzzle in current_room.puzzles:
+        if user_answer.lower() == puzzle.answer.lower():
             await ctx.send('Correct!')
             break
     else:

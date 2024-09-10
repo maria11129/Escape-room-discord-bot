@@ -1,0 +1,32 @@
+for example game one i want to create a room called "Cipher Chamber"
+that has binary coded inside of it 
+puzzle 1:(question, answer ,clue)
+
+Question: "I am a sequence of digits, but I only know 0s and 1s. When you add my values together, you get a perfect square. What am I?"
+Clue: "Think about numbers that computers love to talk in!"
+Answer: "10000 (16 in binary, and 1+0+0+0+0 = 1, which is a perfect square)."
+
+
+
+puzzle 2:(question, answer ,clue)
+
+
+Question: "I am a 7-bit binary number. When my digits are interpreted as a decimal number,
+ they represent a prime number. When converted to ASCII, I am a character used in many 
+ programming languages to represent a newline. What am I?"
+
+Clue: "Look for a binary sequence that translates to a symbol commonly used to start a new line."
+Answer: "0000100 (4 in decimal, which is a prime number, and in ASCII, it represents the 'ASCII Horizontal Tab' character. 
+This is a trickier one because the newline character is actually '0000100', 
+but ASCII is not strictly a newline—often '\n' in ASCII would be 10 in decimal)."
+
+
+
+puzzle 3: 
+
+Question: "I am a binary number that is 8 bits long. When you convert me to decimal, I give you the total number of days in a non-leap year. My binary representation starts with '0001'. What am I?"
+Clue: "Consider how many days are in a standard year and how that might be represented in binary."
+Answer: "00100111 (which is 365 in decimal, representing the number of days in a non-leap year)."
+
+
+
