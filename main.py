@@ -1,8 +1,18 @@
 import discord
 from discord.ext import commands
-import random
+import os 
+from dotenv import load_dotenv
 
-bot = commands.Bot(command_prefix='!')
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Define the necessary intents
+intents = discord.Intents.default()
+intents.messages = True  # Enable the intent to receive message events
+
+# Create the bot instance with command prefix and intents
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Define a room class
 class Room:
@@ -34,11 +44,14 @@ async def start(ctx):
 
 # Create a bot command to submit an answer
 @bot.command()
-async def answer(ctx, answer):
+async def answer(ctx, *, answer: str):  # Use * to capture the whole answer as a single string
     # Check if the answer is correct
-    if answer == puzzle.answer:
-        await ctx.send('Correct!')
+    for puzzle in room.puzzles:
+        if answer.lower() == puzzle.answer.lower():  # Ignore case for answer comparison
+            await ctx.send('Correct!')
+            break
     else:
         await ctx.send('Incorrect. Try again!')
 
-bot.run('YOUR_BOT_TOKEN')
+# Run the bot
+bot.run(os.getenv('TOKEN'))
