@@ -36,8 +36,32 @@ Timer:
 You could add a time limit for solving all the puzzles to increase the challenge, just like in real escape rooms.
 
 
+
+
+
+
 Score or Attempts Tracking:
 You could track how many attempts or incorrect answers the player has made and use that as part of the escape room scoring.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 Different Rooms:
@@ -49,6 +73,5 @@ You can set conditions for winning (like solving all the puzzles) or losing (lik
 
 for example i want to click on 
 
-!start 
-
+!start  ja w 
 the bot response : will be something like , WELCOME TO THIS ESCAPE ROOM GAME , HERES THE AVAILABLE  Rooms choose one to ENTER 

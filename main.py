@@ -46,6 +46,7 @@ current_room = None
 current_puzzle_index = 0
 TIME_LIMIT = 60
 
+
 # Create a bot command to start the game
 @bot.command()
 async def enter(ctx, *, room_name: str):
@@ -61,17 +62,25 @@ async def enter(ctx, *, room_name: str):
             current_room = r
             await ctx.send(f'Welcome to {r.name}!')
             await ctx.send(r.description)
+
             # Send the first puzzle
             await ctx.send(r.puzzles[current_puzzle_index].question)
-        try:
-            await asyncio.sleep(TIME_LIMIT)
-            await ctx.send(f"Time's up! The answer to {r.puzzles[current_puzzle_index].question} was {r.puzzles[current_puzzle_index].answer}.")
-        except asyncio.CancelledError:
-            pass
+            await ctx.send(f"\nYou have {TIME_LIMIT} seconds to solve it!")
+            # Start the countdown
+            time_remaining = TIME_LIMIT
+            message = await ctx.send(f"⏳ Time remaining: {time_remaining} seconds")
+        
+            while time_remaining > 0:
+                await asyncio.sleep(1)  # Wait for 1 second
+                time_remaining -= 1
+                await message.edit(content=f"⏳ Time remaining: {time_remaining} seconds")
+        
+            await ctx.send(f"⏰ Time's up! The answer to {r.puzzles[current_puzzle_index].question} was {r.puzzles[current_puzzle_index].answer}.")
 
             break
     else:
         await ctx.send('Room not found.')
+
 
 # Create a bot command to submit an answer
 @bot.command()
