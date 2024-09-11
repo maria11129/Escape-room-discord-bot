@@ -105,5 +105,12 @@ async def clue(ctx):
     # Provide the clue for the current puzzle
     await ctx.send(f"Here’s a clue: {current_puzzle.clue}")
 
+@bot.command()
+async def  list(ctx):
+    await ctx.send("Here are the rooms:")
+    for room in rooms:
+        await ctx.send(room.name)
+
+
 # Run the bot
 bot.run(os.getenv('TOKEN'))

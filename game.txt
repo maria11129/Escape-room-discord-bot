@@ -43,3 +43,10 @@ Eventually, you could expand by adding more rooms (not just the Cipher Chamber) 
 Winning or Losing:
 
 You can set conditions for winning (like solving all the puzzles) or losing (like running out of time or attempts).
+
+
+for example i want to click on 
+
+!start 
+
+the bot response : will be something like , WELCOME TO THIS ESCAPE ROOM GAME , HERES THE AVAILABLE  Rooms choose one to ENTER 
