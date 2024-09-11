@@ -31,14 +31,16 @@ Answer: "00100111 (which is 365 in decimal, representing the number of days in a
 
 
 Additional Escape Room Elements You Might Want to Add:
+
 Timer:
-
 You could add a time limit for solving all the puzzles to increase the challenge, just like in real escape rooms.
+
+
 Score or Attempts Tracking:
-
 You could track how many attempts or incorrect answers the player has made and use that as part of the escape room scoring.
-Different Rooms:
 
+
+Different Rooms:
 Eventually, you could expand by adding more rooms (not just the Cipher Chamber) with different themes and puzzles.
 Winning or Losing:
 

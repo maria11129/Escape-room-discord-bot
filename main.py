@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
+import asyncio
+
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -42,11 +44,12 @@ rooms = [room1]
 # Variables to track game state
 current_room = None
 current_puzzle_index = 0
+TIME_LIMIT = 60
 
 # Create a bot command to start the game
 @bot.command()
-async def start(ctx, *, room_name: str):
-    print(f"Start command received with room_name: '{room_name}'")  # Debug output
+async def enter(ctx, *, room_name: str):
+    print(f"enter command received with room_name: '{room_name}'")  # Debug output
     global current_room, current_puzzle_index
     current_room = None
     current_puzzle_index = 0
@@ -60,6 +63,12 @@ async def start(ctx, *, room_name: str):
             await ctx.send(r.description)
             # Send the first puzzle
             await ctx.send(r.puzzles[current_puzzle_index].question)
+        try:
+            await asyncio.sleep(TIME_LIMIT)
+            await ctx.send(f"Time's up! The answer to {r.puzzles[current_puzzle_index].question} was {r.puzzles[current_puzzle_index].answer}.")
+        except asyncio.CancelledError:
+            pass
+
             break
     else:
         await ctx.send('Room not found.')
@@ -106,10 +115,12 @@ async def clue(ctx):
     await ctx.send(f"Here’s a clue: {current_puzzle.clue}")
 
 @bot.command()
-async def  list(ctx):
-    await ctx.send("Here are the rooms:")
+async def  start(ctx):
+    await ctx.send("WELCOME to Escape the Room! 🗝️ Get ready to unlock doors, solve puzzles, and test your wits. Will you escape or be trapped forever? The choice is yours!")
+    await ctx.send("Here’s the list of mysterious rooms waiting for you to explore: choose wisely, adventurer!")
     for room in rooms:
         await ctx.send(room.name)
+    await ctx.send("Ready for adventure? Use !enter [room_name] to step into the unknown and uncover hidden secrets!")
 
 
 # Run the bot
