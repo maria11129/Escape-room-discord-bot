@@ -5,10 +5,8 @@ from dotenv import load_dotenv
 import asyncio
 import sqlite3
 
-
 # Load environment variables from the .env file
 load_dotenv()
-
 
 # Define the necessary intents
 intents = discord.Intents.default()
@@ -19,9 +17,13 @@ intents.message_content = True  # Enable to receive message content
 # Create the bot instance with command prefix and intents
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+# Step 6: Connect to SQLite Database
+# SQLite will automatically create the 'game_data.db' file if it does not exist.
 conn = sqlite3.connect('game_data.db')
-c= conn.cursor()
+c = conn.cursor()
 
+# Step 7: Create 'players' table if it doesn't already exist
+# This stores player ID, score, attempts, and whether they've solved the puzzle.
 c.execute('''
     CREATE TABLE IF NOT EXISTS players (
         id TEXT PRIMARY KEY,
@@ -32,14 +34,14 @@ c.execute('''
 ''')
 conn.commit()
 
-# Define a room class
+# Define a Room class
 class Room:
     def __init__(self, name, description, puzzles):
         self.name = name
         self.description = description
         self.puzzles = puzzles
 
-# Define a puzzle class
+# Define a Puzzle class
 class Puzzle:
     def __init__(self, question, answer, clue):
         self.question = question
@@ -61,19 +63,24 @@ current_room = None
 current_puzzle_index = 0
 TIME_LIMIT = 60
 
-
-# Create a bot command to start the game
+# Step 8: Store player data to database upon room entry
 @bot.command()
 async def enter(ctx, *, room_name: str):
-    print(f"enter command received with room_name: '{room_name}'")  # Debug output
     global current_room, current_puzzle_index
+    player_id = str(ctx.author.id)  # Get player's Discord ID
+    
+    # Check if the player is already in the database
+    player = c.execute('SELECT * FROM players WHERE id = ?', (player_id,)).fetchone()
+    if player is None:
+        # If player not in database, add with default score and attempts
+        c.execute('INSERT INTO players (id, score, attempts, solved) VALUES (?, ?, ?, ?)', (player_id, 100, 0, False))
+        conn.commit()
+    
     current_room = None
     current_puzzle_index = 0
     room_name = room_name.strip().lower()  # Normalize and strip whitespace
-    print(f"Normalized room_name: '{room_name}'")  # Debug output
     for r in rooms:
-        print(f"Checking room: '{r.name.lower()}'")  # Debug output
-        if r.name.lower() == room_name:  # Compare in lowercase
+        if r.name.lower() == room_name:
             current_room = r
             await ctx.send(f'Welcome to {r.name}!')
             await ctx.send(r.description)
@@ -81,23 +88,20 @@ async def enter(ctx, *, room_name: str):
             # Send the first puzzle
             await ctx.send(r.puzzles[current_puzzle_index].question)
             await ctx.send(f"\nYou have {TIME_LIMIT} seconds to solve it!")
-            # Start the countdown
+
+            # Start the countdown timer
             time_remaining = TIME_LIMIT
             message = await ctx.send(f"⏳ Time remaining: {time_remaining} seconds")
-        
             while time_remaining > 0:
-                await asyncio.sleep(1)  # Wait for 1 second
+                await asyncio.sleep(1)
                 time_remaining -= 1
                 await message.edit(content=f"⏳ Time remaining: {time_remaining} seconds")
-        
             await ctx.send(f"⏰ Time's up! The answer to {r.puzzles[current_puzzle_index].question} was {r.puzzles[current_puzzle_index].answer}.")
-
             break
     else:
         await ctx.send('Room not found.')
 
-
-# Create a bot command to submit an answer
+# Command to submit an answer
 @bot.command()
 async def answer(ctx, *, user_answer: str):
     global current_room, current_puzzle_index
@@ -107,12 +111,15 @@ async def answer(ctx, *, user_answer: str):
 
     # Get the current puzzle
     current_puzzle = current_room.puzzles[current_puzzle_index]
+    player_id = str(ctx.author.id)
 
     if user_answer.lower() == current_puzzle.answer.lower():
+        # Update player's progress in the database
+        c.execute('UPDATE players SET solved = ? WHERE id = ?', (True, player_id))
+        conn.commit()
         await ctx.send('Correct!')
         current_puzzle_index += 1  # Move to the next puzzle
 
-        # Check if there are more puzzles
         if current_puzzle_index < len(current_room.puzzles):
             # Send the next puzzle
             await ctx.send(current_room.puzzles[current_puzzle_index].question)
@@ -124,7 +131,7 @@ async def answer(ctx, *, user_answer: str):
         await ctx.send('Incorrect. Try again!')
         await ctx.send("If you need help, type `!clue` for a hint!")
 
-# Create a bot command to request a clue
+# Command to request a clue
 @bot.command()
 async def clue(ctx):
     global current_room, current_puzzle_index
@@ -132,20 +139,17 @@ async def clue(ctx):
         await ctx.send('You need to start a room first using !start [room_name]')
         return
 
-    # Get the current puzzle
     current_puzzle = current_room.puzzles[current_puzzle_index]
-    
-    # Provide the clue for the current puzzle
     await ctx.send(f"Here’s a clue: {current_puzzle.clue}")
 
+# Game start command
 @bot.command()
-async def  start(ctx):
+async def start(ctx):
     await ctx.send("WELCOME to Escape the Room! 🗝️ Get ready to unlock doors, solve puzzles, and test your wits. Will you escape or be trapped forever? The choice is yours!")
-    await ctx.send("Here’s the list of mysterious rooms waiting for you to explore: choose wisely, adventurer!")
+    await ctx.send("Here’s the list of mysterious rooms waiting for you to explore:")
     for room in rooms:
         await ctx.send(room.name)
-    await ctx.send("Ready for adventure? Use !enter [room_name] to step into the unknown and uncover hidden secrets!")
-
+    await ctx.send("Ready? Use !enter [room_name] to start!")
 
 # Run the bot
 bot.run(os.getenv('TOKEN'))
