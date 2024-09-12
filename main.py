@@ -61,7 +61,7 @@ rooms = [room1]
 # Variables to track game state
 current_room = None
 current_puzzle_index = 0
-TIME_LIMIT = 60
+TIME_LIMIT = 160
 
 # Step 8: Store player data to database upon room entry
 @bot.command()
@@ -150,6 +150,36 @@ async def start(ctx):
     for room in rooms:
         await ctx.send(room.name)
     await ctx.send("Ready? Use !enter [room_name] to start!")
+
+    
+@bot.command()
+async def rank(ctx):
+    try:
+        # Connect to the SQLite Database
+        conn = sqlite3.connect('game_data.db')
+        c = conn.cursor()
+
+        # Query the players table and get all players sorted by score (descending)
+        c.execute('SELECT id, score FROM players ORDER BY score DESC')
+        rows = c.fetchall()
+
+        # Close the database connection
+        conn.close()
+
+        if rows:
+            # Create a leaderboard message
+            leaderboard = "🏆 **Leaderboard** 🏆\n\n"
+            for idx, row in enumerate(rows):
+                player_id, score = row
+                member = await bot.fetch_user(player_id)  # Fetch Discord user by ID
+                leaderboard += f"**{idx + 1}. {member.name}** - {score} points\n"
+
+            # Send the leaderboard
+            await ctx.send(leaderboard)
+        else:
+            await ctx.send("No players found in the ranking.")
+    except sqlite3.Error as e:
+        await ctx.send(f"An error occurred while fetching the rankings: {e}")
 
 # Run the bot
 bot.run(os.getenv('TOKEN'))
