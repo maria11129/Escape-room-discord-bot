@@ -3,10 +3,12 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 import asyncio
+import sqlite3
 
 
 # Load environment variables from the .env file
 load_dotenv()
+
 
 # Define the necessary intents
 intents = discord.Intents.default()
@@ -16,6 +18,19 @@ intents.message_content = True  # Enable to receive message content
 
 # Create the bot instance with command prefix and intents
 bot = commands.Bot(command_prefix='!', intents=intents)
+
+conn = sqlite3.connect('game_data.db')
+c= conn.cursor()
+
+c.execute('''
+    CREATE TABLE IF NOT EXISTS players (
+        id TEXT PRIMARY KEY,
+        score INTEGER,
+        attempts INTEGER,
+        solved BOOLEAN
+    )
+''')
+conn.commit()
 
 # Define a room class
 class Room:
