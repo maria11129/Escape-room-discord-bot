@@ -2,6 +2,8 @@
 
 a Discord bot that simulates a virtual escape room experience, where users must solve puzzles, riddles, and challenges to escape a themed room within a set time limit.
 
+(work is still in progress !! its not done yet)
+
 ### **Features:**
 
 1. **Room Themes:** Offer multiple themed rooms, such as a detective's office, a sci-fi laboratory, or a medieval castle. Each room would have its unique storyline, puzzles, and challenges.
