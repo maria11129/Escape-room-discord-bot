@@ -15,9 +15,3 @@ a Discord bot that simulates a virtual escape room experience, where users must 
 4. **Time Limit:**  a time limit for each room, and challenge users to escape before time runs out.
 5. **Team Play:** it Allows users to form teams to collaborate and solve puzzles together.
 6. **Leaderboard:** it Keeps track of the fastest escape times and display a leaderboard to encourage competition.
-
-### **Technical Requirements:**
-
-1. **Discord.py Library:** Use the Discord.py library to interact with the Discord API and create the bot.
-2. **Database:** Design a database to store room themes, puzzles, clues, and user progress.
-3. **Timer:** Implement a timer to keep track of the time limit for each room.
